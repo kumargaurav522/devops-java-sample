@@ -27,20 +27,14 @@ pipeline {
             }
         }
 
-  stage ('unit test') {
-            steps {
-                container ('maven') {
-                    sh 'mvn clean  -gs `pwd`/configuration/settings.xml test'
-                }
-            }
-        }
+
 
         stage('sonarqube analysis') {
           steps {
             container ('maven') {
               withCredentials([string(credentialsId: "$SONAR_CREDENTIAL_ID", variable: 'SONAR_TOKEN')]) {
                 withSonarQubeEnv('sonar') {
-                 sh "mvn sonar:sonar   -Dsonar.projectKey=java-demo   -Dsonar.host.url=https://sonarqube.tuxmailer.dev -Dsonar.login=6837d3e7b6a705aaaf22d608139219c02fb88041"
+                 sh "mvn sonar:sonar   -Dsonar.projectKey=java-demo  -Dsonar.sources=.  -Dsonar.host.url=https://sonarqube.tuxmailer.dev -Dsonar.login=6837d3e7b6a705aaaf22d608139219c02fb88041"
                 }
               }
               timeout(time: 1, unit: 'HOURS') {
